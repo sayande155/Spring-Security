@@ -1,4 +1,3 @@
-
 package com.sd133.springSecurityDemo2.controller;
 
 import com.sd133.springSecurityDemo2.dto.UserDto;
@@ -29,7 +28,7 @@ public class UserController {
     }
 
     @PutMapping("updateUser")
-    public ResponseEntity<String> doLogin(@RequestBody UserDto userDto){
+    public ResponseEntity<String> doLogin(@RequestBody UserDto userDto) {
         User user = new User(
                 userDto.getUsername(),
                 userDto.getPassword(),
