@@ -1,3 +1,4 @@
+
 package com.sd133.springSecurityDemo2.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class SecurityConfig {
                 .build();
 
 
-             // .formLogin(Customizer.withDefaults()) // As stateless session policy is used to this is not needed.
+        // .formLogin(Customizer.withDefaults()) // As stateless session policy is used to this is not needed.
     }
 
     @Bean
