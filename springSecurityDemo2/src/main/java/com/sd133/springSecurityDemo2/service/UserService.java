@@ -22,6 +22,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtService jwtService;
+
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -45,6 +48,7 @@ public class UserService {
     public ResponseEntity<String> doUpdate(User user) {
         try {
             if (userRepository.existsById(user.getUsername())) {
+                user.setPassword(encoder.encode(user.getPassword()));
                 userRepository.save(user);
                 return new ResponseEntity<>("Update Successful", HttpStatus.OK);
             } else {
@@ -59,7 +63,7 @@ public class UserService {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword()));
             return authentication.isAuthenticated() ?
-                    new ResponseEntity<>("Login Success", HttpStatus.OK) :
+                    new ResponseEntity<>(jwtService.generateToken(userLoginDto.getUsername()), HttpStatus.OK) :
                     new ResponseEntity<>("Login Failed", HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
