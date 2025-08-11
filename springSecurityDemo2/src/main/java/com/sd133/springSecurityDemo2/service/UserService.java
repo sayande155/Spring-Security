@@ -1,11 +1,15 @@
 package com.sd133.springSecurityDemo2.service;
 
 import com.sd133.springSecurityDemo2.model.User;
+import com.sd133.springSecurityDemo2.model.UserLoginDto;
 import com.sd133.springSecurityDemo2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +17,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<String> doRegister(User user) {
@@ -39,6 +46,19 @@ public class UserService {
                 return new ResponseEntity<>("User not exist", HttpStatus.NOT_FOUND);
             }
         } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public ResponseEntity<String> doValidate(UserLoginDto userLoginDto) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword()));
+            return authentication.isAuthenticated() ?
+                    new ResponseEntity<>("Login Success", HttpStatus.OK) :
+                    new ResponseEntity<>("Login Failed", HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

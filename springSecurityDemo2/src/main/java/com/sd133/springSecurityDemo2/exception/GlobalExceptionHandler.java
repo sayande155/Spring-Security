@@ -1,11 +1,14 @@
 package com.sd133.springSecurityDemo2.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.URI;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
@@ -48,5 +51,14 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ProblemDetail handleAuthorizationDenied(AuthorizationDeniedException e, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setTitle("Access Denied");
+        problem.setDetail("You are not authorized to perform this action.");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        problem.setProperty("timestamp", LocalDateTime.now());
+        return problem;
+    }
 
 }

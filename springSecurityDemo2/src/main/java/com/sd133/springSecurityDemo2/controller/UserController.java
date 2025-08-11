@@ -2,6 +2,7 @@ package com.sd133.springSecurityDemo2.controller;
 
 import com.sd133.springSecurityDemo2.dto.UserDto;
 import com.sd133.springSecurityDemo2.model.User;
+import com.sd133.springSecurityDemo2.model.UserLoginDto;
 import com.sd133.springSecurityDemo2.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class UserController {
         return userService.doUpdate(user);
     }
 
-//    @PostMapping("login")
-//    public ResponseEntity<String> doLogin(){
-//        return userService.doLogin();
-//    }
+    @PostMapping("login")
+    public ResponseEntity<String> doLogin(@RequestBody UserLoginDto userLoginDto){
+        return userService.doValidate(userLoginDto);
+    }
 }
