@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,12 +22,16 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<String> doRegister(User user) {
         if (userRepository.existsById(user.getUsername())) {
             System.out.println("User Exists");
             return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
         }
+
+        user.setPassword(encoder.encode(user.getPassword()));
 
         try {
             userRepository.save(user);
@@ -49,7 +54,6 @@ public class UserService {
             throw new RuntimeException(e);
         }
     }
-
 
     public ResponseEntity<String> doValidate(UserLoginDto userLoginDto) {
         try {
